@@ -1,0 +1,61 @@
+.app {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background-color: #282c34;
+  /* background-color: #000; */
+  font-family: 'Arial', sans-serif;
+}
+
+.header {
+  font-size: 2rem;
+  color: white;
+  margin-bottom: 20px;
+}
+
+.grid {
+  display: grid;
+  border-top: 10px;
+  border-bottom: 10px;
+  border-left: 5px;
+  border-right: 5px;
+  border-style: solid;
+  border-color: grey;
+  grid-template-rows: repeat(15, 30px);
+  grid-template-columns: repeat(20, 30px);
+  gap: 2px;
+  background-color: black;
+  
+}
+
+.cell {
+  border: 1px solid grey;
+  width: 30px;
+  height: 30px;
+  /* background-color: #000; */
+  /* border-radius: 1px; */
+}
+
+.rain {
+  /* animation: fall 1.2s cubic-bezier(0.25, 0.1, 0.25, 1) infinite; */
+  animation: fall 1.2s ease infinite;
+}
+
+@keyframes fall {
+  100% {
+    transform: translateY(0);
+    opacity: 0;
+  }
+  0% {
+    transform: translateY(-100%);
+    opacity: 1;
+  }
+}
+
+.instructions {
+  font-size: 1rem;
+  color: white;
+  margin-top: 20px;
+}
