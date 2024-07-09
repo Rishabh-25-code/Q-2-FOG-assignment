@@ -25,7 +25,7 @@ const App = () => {
 
   return (
     <div className="app">
-      <div className="header">Rain Grid Game</div>
+      <div className="header">Rain Grid Pattern</div>
       <div className="grid">
         {grid.map((row, rowIndex) =>
           row.map((cell, colIndex) => (
@@ -36,9 +36,6 @@ const App = () => {
             ></div>
           ))
         )}
-      </div>
-      <div className="instructions">
-        Watch the rain fall! Refresh to see a new pattern.
       </div>
     </div>
   );
@@ -63,7 +60,7 @@ const createRandomColor = () => {
 const createInitialTimers = () => {
   const timers = [];
   for (let i = 0; i < GRID_COLS; i++) {
-    timers.push(Math.floor(Math.random() * 100)); // Start with no delay for any column
+    timers.push(Math.floor(Math.random() * 100)); 
   }
   return timers;
 };
