@@ -1,58 +1,42 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
 .app {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   height: 100vh;
-  background-color: #282c34;
+  background-color: #696c72;
   font-family: 'Arial', sans-serif;
 }
 
-.header {
-  font-size: 2rem;
-  color: white;
-  margin-bottom: 20px;
-  text-align: center;
-}
 
 .grid {
   display: grid;
-  border: 10px solid grey;
-  grid-template-rows: repeat(15, 30px);
-  grid-template-columns: repeat(20, 30px);
-  gap: 2px;
-  background-color: black;
+  grid-template-rows: repeat(15, 20px);
+  grid-template-columns: repeat(20, 20px);
+  border-bottom: 5px solid #282c34;
+  border-top: 5px solid #282c34;
+}
+
+.row {
+  display: contents;
 }
 
 .cell {
-  border: 1px solid grey;
-  width: 30px;
-  height: 30px;
+  width: 20px;
+  height: 20px;
+  border: 1.5px solid #333;
+  transition: background-color 0.8s ease, transform 0.5s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  background-color: black;
 }
 
-.rain {
-  animation: fall 1.2s ease infinite;
-}
 
-@keyframes fall {
-  100% {
-    transform: translateY(0);
-    opacity: 0;
-  }
-  0% {
-    transform: translateY(-100%);
-    opacity: 1;
-  }
-}
-
-.instructions {
-  font-size: 1rem;
-  color: white;
-  margin-top: 20px;
-  text-align: center;
-}
-
-/* Media Queries for Responsiveness */
 @media (max-width: 1200px) {
   .grid {
     grid-template-rows: repeat(15, 20px);
@@ -76,12 +60,6 @@
 }
 
 @media (max-width: 600px) {
-  .header {
-    font-size: 1.5rem;
-  }
-  .instructions {
-    font-size: 0.9rem;
-  }
   .grid {
     grid-template-rows: repeat(15, 10px);
     grid-template-columns: repeat(20, 10px);

@@ -1,85 +1,98 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import './App.css';
 
-const GRID_ROWS = 15;
-const GRID_COLS = 20;
+const rows = 15;
+const cols = 20;
 
 const App = () => {
-  const [grid, setGrid] = useState(createEmptyGrid());
-  const [color, setColor] = useState(createRandomColor());
-  const [colTimers, setColTimers] = useState(createInitialTimers());
+  const [grid, setGrid] = useState([]);
+  const dropsRef = useRef([]);
+  const [currentColor, setCurrentColor] = useState('red');
+  const [colorChangeInterval, setColorChangeInterval] = useState(3000);
+  const [colorChangeCount, setColorChangeCount] = useState(0);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setGrid(prevGrid => updateGridWithRain(prevGrid, color, colTimers));
-      setColTimers(prevTimers => updateTimers(prevTimers));
-    }, 100);
-    const colorInterval = setInterval(() => {
-      setColor(createRandomColor());
-    }, 200);
-    return () => {
-      clearInterval(interval);
-      clearInterval(colorInterval);
+    const createGrid = () => {
+      let newGrid = [];
+      for (let i = 0; i < rows; i++) {
+        let row = [];
+        for (let j = 0; j < cols; j++) {
+          row.push({ color: 'black', falling: false });
+        }
+        newGrid.push(row);
+      }
+      setGrid(newGrid);
     };
-  }, [colTimers, color]);
+
+    createGrid();
+  }, []);
+
+  useEffect(() => {
+    const dropRain = () => {
+      setGrid(prevGrid => {
+        let newGrid = prevGrid.map(row => row.map(cell => ({ ...cell, color: 'black', falling: false })));
+
+        for (let i = dropsRef.current.length - 1; i >= 0; i--) {
+          const drop = dropsRef.current[i];
+          if (drop.row < rows - 1) {
+            newGrid[drop.row][drop.col].color = 'black';
+            newGrid[drop.row][drop.col].falling = false;
+            drop.row++;
+            newGrid[drop.row][drop.col].color = drop.color;
+            newGrid[drop.row][drop.col].falling = true;
+          } else {
+            dropsRef.current.splice(i, 1);
+          }
+        }
+
+        if (dropsRef.current.every(drop => drop.row > 0) || dropsRef.current.length === 0) {
+          const randomCol = Math.floor(Math.random() * cols);
+          let dropColor = currentColor;
+          const rgb = dropColor.match(/\d+/g).map(Number);
+          for (let i = 0; i < 7; i++) {
+            const colorDensity = i / 6;
+            const fadedColor = `rgb(${Math.floor(rgb[0] * colorDensity)}, ${Math.floor(rgb[1] * colorDensity)}, ${Math.floor(rgb[2] * colorDensity)})`;
+            newGrid[i][randomCol].color = fadedColor;
+            newGrid[i][randomCol].falling = true;
+            dropsRef.current.push({ row: i, col: randomCol, color: fadedColor });
+          }
+        }
+
+        return newGrid;
+      });
+    };
+
+    const interval = setInterval(dropRain, 200);
+    return () => clearInterval(interval);
+  }, [currentColor]);
+
+  useEffect(() => {
+    const changeColorInterval = setInterval(() => {
+      const newColor = `rgb(${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)})`;
+      setCurrentColor(newColor);
+      setColorChangeCount(colorChangeCount + 1);
+    }, colorChangeInterval);
+
+    return () => clearInterval(changeColorInterval);
+  }, [colorChangeInterval]);
 
   return (
-    <div className="app">
-      <div className="header">Rain Grid Pattern</div>
+    <div className='app'>
       <div className="grid">
-        {grid.map((row, rowIndex) =>
-          row.map((cell, colIndex) => (
-            <div
-              key={`${rowIndex}-${colIndex}`}
-              className={`cell ${cell ? 'rain' : ''}`}
-              style={{ backgroundColor: cell || 'black', border: '2px solid grey'}}
-            ></div>
-          ))
-        )}
+        {grid.map((row, rowIndex) => (
+          <div key={rowIndex} className="row">
+            {row.map((cell, colIndex) => (
+              <div
+                key={colIndex}
+                className = 'cell'
+                style={{ backgroundColor: cell.color }}
+              ></div>
+            ))}
+          </div>
+        ))}
       </div>
     </div>
   );
-};
-
-const createEmptyGrid = () => {
-  const grid = [];
-  for (let i = 0; i < GRID_ROWS; i++) {
-    const row = [];
-    for (let j = 0; j < GRID_COLS; j++) {
-      row.push('');
-    }
-    grid.push(row);
-  }
-  return grid;
-};
-
-const createRandomColor = () => {
-  return '#' + Math.floor(Math.random() * 16777215).toString(16);
-};
-
-const createInitialTimers = () => {
-  const timers = [];
-  for (let i = 0; i < GRID_COLS; i++) {
-    timers.push(Math.floor(Math.random() * 100)); 
-  }
-  return timers;
-};
-
-const updateTimers = (timers) => {
-  return timers.map((timer) => (timer > 0 ? timer - 1 : Math.floor(Math.random())));
-};
-
-const updateGridWithRain = (grid, color, colTimers) => {
-  const newGrid = grid.map(row => [...row]);
-  for (let col = 0; col < GRID_COLS; col++) {
-    if (colTimers[col] === 0) {
-      for (let row = GRID_ROWS - 1; row > 0; row--) {
-        newGrid[row][col] = newGrid[row-1][col];
-      }
-      newGrid[1][col] = color;
-    } 
-  }
-  return newGrid;
 };
 
 export default App;
